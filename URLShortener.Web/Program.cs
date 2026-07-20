@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using URLShortener.Infrastructure.Data;
+using URLShortener.Web.Data;
+using URLShortener.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,8 @@ builder.Services.AddControllersWithViews();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("DefaultConnection was not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+
+builder.Services.AddScoped<UrlShortenerService>();
 
 var app = builder.Build();
 

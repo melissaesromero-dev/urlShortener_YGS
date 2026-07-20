@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using URLShortener.Web.Entities;
 
-namespace URLShortener.Infrastructure.Data
+namespace URLShortener.Web.Data
 {
     public class ApplicationDbContext : DbContext
     {
