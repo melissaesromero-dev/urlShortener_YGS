@@ -21,7 +21,12 @@ namespace URLShortener.Web.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            return View(new HomeViewModel());
+            var model = new HomeViewModel
+            {
+                GeneratedShortUrl = TempData["GeneratedShortUrl"] as string
+            };
+
+            return View(model);
         }
 
         [HttpPost]
@@ -38,14 +43,10 @@ namespace URLShortener.Web.Controllers
                 var urlEntry = await _urlShortenerService
                     .ShortenUrlAsync(model.OriginalUrl);
 
-                model.GeneratedShortUrl =
+                TempData["GeneratedShortUrl"] = 
                     $"{Request.Scheme}://{Request.Host}/{urlEntry.ShortUrl}";
 
-                model.ShortCode = urlEntry.ShortUrl;
-                model.CreatedAt = urlEntry.CreatedAt;
-                model.ClickCount = urlEntry.ClickCount;
-
-                return View(model);
+                return RedirectToAction(nameof(Index));
             }
             catch (ArgumentException exception)
             {

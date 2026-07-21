@@ -65,28 +65,7 @@
             </output>
         </div>
     </section>
-
-    <section class="card shadow-sm"
-             aria-labelledby="analytics-heading">
-        <div class="card-body">
-            <h2 id="analytics-heading" class="h4">
-                Analytics
-            </h2>
-
-            <dl class="row mb-0">
-                <dt class="col-sm-4">Created</dt>
-                <dd class="col-sm-8">
-                    @Model.CreatedAt?.ToLocalTime()
-                    .ToString("MMM d, yyyy h:mm tt")
-                </dd>
-
-                <dt class="col-sm-4">Total clicks</dt>
-                <dd class="col-sm-8">
-                    @Model.ClickCount
-                </dd>
-            </dl>
-        </div>
-    </section>
+       
 }
 
 @section Scripts {

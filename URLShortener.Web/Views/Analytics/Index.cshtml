@@ -1,0 +1,130 @@
+﻿@model AnalyticsViewModel
+
+@{
+    ViewData["Title"] = "Analytics Reports";
+}
+
+<header class="mb-4">
+    <h1>Analytics Reports</h1>
+
+    <p class="text-muted">
+        Select a shortened URL to view its analytics.
+    </p>
+</header>
+
+<div class="row g-4">
+    <section class="col-lg-5"
+             aria-labelledby="url-list-heading">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 id="url-list-heading" class="h4">
+                    Shortened URLs
+                </h2>
+
+                @if (Model.Urls.Count == 0)
+                {
+                    <p class="text-muted mb-0">
+                        No shortened URLs have been created yet.
+                    </p>
+                }
+                else
+                {
+                    <nav aria-label="Shortened URL reports">
+                        <ul class="list-group list-group-flush">
+                            @foreach (var url in Model.Urls)
+                            {
+                                var isSelected =
+                                Model.SelectedUrl?.ShortUrl == url.ShortUrl;
+
+                                <li class="list-group-item px-0">
+                                    <a asp-controller="Analytics"
+                                       asp-action="Index"
+                                       asp-route-shortCode="@url.ShortUrl"
+                                       class="analytics-list-link @(isSelected
+                                                              ? "analytics-list-link--selected"
+                                                              : "")"
+                               aria-current="@(isSelected ? "true" : null)">
+
+                                        <span>
+                                            <strong>@url.ShortUrl</strong>
+
+                                            <small class="d-block text-muted text-truncate">
+                                                @url.OriginalUrl
+                                            </small>
+                                        </span>
+                                                                                
+                                    </a>
+                                </li>
+                                                }
+                        </ul>
+                    </nav>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="col-lg-7"
+             aria-labelledby="analytics-details-heading">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 id="analytics-details-heading" class="h4">
+                    Analytics Details
+                </h2>
+
+                @if (Model.SelectedUrl == null)
+                {
+                    <p class="text-muted mb-0">
+                        Select a shortened URL to view its details.
+                    </p>
+                }
+                else
+                {
+                    var shortUrl =
+                    $"{Context.Request.Scheme}://{Context.Request.Host}/{Model.SelectedUrl.ShortUrl}";
+
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">
+                            Short URL
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            <a href="@shortUrl"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                @shortUrl
+                            </a>
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Original URL
+                        </dt>
+
+                        <dd class="col-sm-8 text-break">
+                            @Model.SelectedUrl.OriginalUrl
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Created
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            @(Model.SelectedUrl.CreatedAt
+                            .ToLocalTime()
+                            .ToString("MMM d, yyyy h:mm tt"))
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Total clicks
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            <span class="analytics-click-total">
+                                @Model.SelectedUrl.ClickCount clicks
+                            </span>
+                        </dd>
+                    </dl>
+                }
+            </div>
+        </div>
+    </section>
+</div>

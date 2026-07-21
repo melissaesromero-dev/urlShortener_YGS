@@ -132,6 +132,17 @@ namespace URLShortener.Web.Services
             return urlEntry;
         }
 
+        // Retrieve all shortened URLs
+        public async Task<List<UrlEntry>> GetAllUrlsAsync()
+        {
+            var urls = await _context.Urls
+                .AsNoTracking()
+                .OrderByDescending(url => url.CreatedAt)
+                .ToListAsync();
+
+            return urls;
+        }
+
         // Generate a random short code
         private string GenerateShortCode()
         {
