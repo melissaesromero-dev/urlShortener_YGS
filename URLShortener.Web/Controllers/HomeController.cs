@@ -1,29 +1,62 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using URLShortener.Web.Models;
+using URLShortener.Web.Services;
 
 namespace URLShortener.Web.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly UrlShortenerService _urlShortenerService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(
+            ILogger<HomeController> logger,
+            UrlShortenerService urlShortenerService)
         {
             _logger = logger;
+            _urlShortenerService = urlShortenerService;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
-            return View();
+            return View(new HomeViewModel());
         }
 
-        public IActionResult Privacy()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Index(HomeViewModel model)
         {
-            return View();
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            try
+            {
+                var urlEntry = await _urlShortenerService
+                    .ShortenUrlAsync(model.OriginalUrl);
+
+                model.GeneratedShortUrl =
+                    $"{Request.Scheme}://{Request.Host}/{urlEntry.ShortUrl}";
+
+                model.ShortCode = urlEntry.ShortUrl;
+                model.CreatedAt = urlEntry.CreatedAt;
+                model.ClickCount = urlEntry.ClickCount;
+
+                return View(model);
+            }
+            catch (ArgumentException exception)
+            {
+                ModelState.AddModelError(
+                    nameof(model.OriginalUrl),
+                    exception.Message);
+
+                return View(model);
+            }
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

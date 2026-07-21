@@ -1,8 +1,94 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model HomeViewModel
+
+@{
+    ViewData["Title"] = "URL Shortener";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<header class="text-center mb-4">
+    <h1>URL Shortener</h1>
+    <p class="text-muted">
+        Enter a long URL to create a shorter link.
+    </p>
+</header>
+
+<section class="card shadow-sm mb-4"
+         aria-labelledby="shorten-heading">
+    <div class="card-body">
+        <h2 id="shorten-heading" class="h4">
+            Shorten a URL
+        </h2>
+
+        <form asp-controller="Home"
+              asp-action="Index"
+              method="post">
+            <fieldset>
+                <legend class="visually-hidden">
+                    URL details
+                </legend>
+
+                <div class="mb-3">
+                    <label asp-for="OriginalUrl"
+                           class="form-label"></label>
+
+                    <input asp-for="OriginalUrl"
+                           class="form-control"
+                           placeholder="https://example.com/long-url" />
+
+                    <span asp-validation-for="OriginalUrl"
+                          class="text-danger"></span>
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    Shorten URL
+                </button>
+            </fieldset>
+        </form>
+    </div>
+</section>
+
+@if (!string.IsNullOrWhiteSpace(Model.GeneratedShortUrl))
+{
+    <section class="card shadow-sm mb-4"
+             aria-labelledby="result-heading">
+        <div class="card-body">
+            <h2 id="result-heading" class="h4">
+                Your shortened URL
+            </h2>
+
+            <output class="d-block">
+                <a href="@Model.GeneratedShortUrl"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    @Model.GeneratedShortUrl
+                </a>
+            </output>
+        </div>
+    </section>
+
+    <section class="card shadow-sm"
+             aria-labelledby="analytics-heading">
+        <div class="card-body">
+            <h2 id="analytics-heading" class="h4">
+                Analytics
+            </h2>
+
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Created</dt>
+                <dd class="col-sm-8">
+                    @Model.CreatedAt?.ToLocalTime()
+                    .ToString("MMM d, yyyy h:mm tt")
+                </dd>
+
+                <dt class="col-sm-4">Total clicks</dt>
+                <dd class="col-sm-8">
+                    @Model.ClickCount
+                </dd>
+            </dl>
+        </div>
+    </section>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
