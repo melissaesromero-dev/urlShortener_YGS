@@ -139,7 +139,7 @@ namespace URLShortener.Web.Services
 
             for (var i = 0; i < ShortCodeLength; i++)
             {
-                var randomIndex = RandomNumberGenerator.GetInt32(AllowedCharacters.Length, i);
+                var randomIndex = RandomNumberGenerator.GetInt32(AllowedCharacters.Length);
 
                 newCode[i] = AllowedCharacters[randomIndex];
             }
